@@ -7,87 +7,64 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Flight Search Results</h1>
+<div class="container">
+    <h1>Flight Search Results</h1>
 
-        <ul class="flight-listings">
-            <li class="flight-listing">
-                <h2 class="flight-title">Flight ABC123</h2>
+    <ul class="flight-listings">
+        <!-- JavaScript will populate flight listings here -->
+    </ul>
+
+    <h2 class="title-subheading">Couldn't find your flight? <a href="index.html">Search again</a></h2>
+</div>
+
+<script>
+    // Sample data for flights (replace with actual data fetched from backend)
+    var flightsData = [
+        { flightId: 1, departureTime: "2024-04-01T12:00:00", arrivalTime: "2024-04-01T14:00:00", origin: "City A", destination: "City B", price: 200 },
+        { flightId: 2, departureTime: "2024-04-01T15:00:00", arrivalTime: "2024-04-01T17:00:00", origin: "City B", destination: "City C", price: 250 },
+        // Add more flight data as needed
+    ];
+
+    // Function to dynamically populate flight listings
+    function populateFlightListings() {
+        var flightListings = document.querySelector('.flight-listings');
+        flightsData.forEach(function(flight) {
+            var li = document.createElement('li');
+            li.classList.add('flight-listing');
+
+            var html = `
+                <h2 class="flight-title">Flight ${flight.flightId}</h2>
                 <div class="flight-details dropdown-content">
-                    <p>Departure: City A</p>
-                    <p>Destination: City B</p>
-                    <p>Departure Time: 12:00 PM</p>
-                    <p>Arrival Time: 2:00 PM</p>
-                    <p>Price: $200</p>
+                    <p>Departure: ${flight.origin}</p>
+                    <p>Destination: ${flight.destination}</p>
+                    <p>Departure Time: ${new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p>Arrival Time: ${new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p>Price: $${flight.price}</p>
                 </div>
-                <button class="book-now">Book Now</button>
-            </li>
-
-            <li class="flight-listing">
-                <h2 class="flight-title">Flight XYZ456</h2>
-                <div class="flight-details dropdown-content">
-                    <p>Departure: City B</p>
-                    <p>Destination: City C</p>
-                    <p>Departure Time: 3:00 PM</p>
-                    <p>Arrival Time: 5:00 PM</p>
-                    <p>Price: $250</p>
-                </div>
-                <button class="book-now">Book Now</button>
-            </li>
-
-            <li class="flight-listing">
-                <h2 class="flight-title">Flight XYZ456</h2>
-                <div class="flight-details dropdown-content">
-                    <p>Departure: City B</p>
-                    <p>Destination: City C</p>
-                    <p>Departure Time: 3:00 PM</p>
-                    <p>Arrival Time: 5:00 PM</p>
-                    <p>Price: $250</p>
-                </div>
-                <button class="book-now">Book Now</button>
-            </li>
-
-            <li class="flight-listing">
-                <h2 class="flight-title">Flight XYZ456</h2>
-                <div class="flight-details dropdown-content">
-                    <p>Departure: City B</p>
-                    <p>Destination: City C</p>
-                    <p>Departure Time: 3:00 PM</p>
-                    <p>Arrival Time: 5:00 PM</p>
-                    <p>Price: $250</p>
-                </div>
-                <button class="book-now">Book Now</button>
-            </li>
-        </ul>
-
-        <h2 class="title-subheading">Couldn't find your flight? <a href="index.html">Search again</a></h2>
-    </div>
-    <script>
-    function handleSubmit(event) {
-    event.preventDefault(); // Prevent the form from submitting normally
-
-    // Get the selected radio button
-    const selectedFlight = document.querySelector('input[name="selected_flight"]:checked');
-
-    // Check if a flight is selected
-    if (selectedFlight) {
-        // Get the flight title
-        const flightTitle = selectedFlight.value;
-
-        // Get the flight details container
-        const flightDetailsContainer = selectedFlight.closest('.flight-listing').querySelector('.flight-details');
-
-        // Extract specific details
-        const departure = flightDetailsContainer.querySelector('.departure').textContent;
-        const destination = flightDetailsContainer.querySelector('.destination').textContent;
-        const departureTime = flightDetailsContainer.querySelector('.departure-time').textContent;
-        const arrivalTime = flightDetailsContainer.querySelector('.arrival-time').textContent;
-        const price = flightDetailsContainer.querySelector('.price').textContent;
-    } else {
-        // No flight selected
-        console.error("Please select a flight.");
+                <button class="book-now" data-flight-id="${flight.flightId}">Book Now</button>
+            `;
+            li.innerHTML = html;
+            flightListings.appendChild(li);
+        });
     }
-}
+
+    // Call function to populate flight listings
+    populateFlightListings();
+
+    // Function to handle booking of a flight
+    document.querySelectorAll('.book-now').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var flightId = this.dataset.flightId;
+            bookFlight(flightId);
+        });
+    });
+
+    function bookFlight(flightId) {
+        // Perform booking logic, e.g., display booking form, send booking request to server, etc.
+        // You can use AJAX to send booking request to the server
+        alert("Flight " + flightId + " booked successfully!");
+    }
 </script>
+
 </body>
 </html>
