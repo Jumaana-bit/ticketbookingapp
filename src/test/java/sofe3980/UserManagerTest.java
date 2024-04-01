@@ -47,4 +47,13 @@ public class UserManagerTest {
         Optional<User> wrongPasswordResult = userManager.loginUser(email, "wrongpassword");
         assertFalse("User should not be able to log in with incorrect password", wrongPasswordResult.isPresent());
     }
+
+    @Test
+    public void testGetUserById() {
+        Optional<User> foundUser = userManager.getUserById(registeredUser.getUserId());
+        assertTrue("User should be found by ID", foundUser.isPresent());
+        assertEquals("Found user should have the correct name", name, foundUser.get().getName());
+        assertEquals("Found user should have the correct email", email, foundUser.get().getEmail());
+    }
+
 }

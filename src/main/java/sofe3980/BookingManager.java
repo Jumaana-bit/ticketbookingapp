@@ -1,23 +1,25 @@
 package sofe3980;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class BookingManager {
 
-    private List<Booking> bookings;
+    private Map<Integer, Booking> bookingsMap; // HashMap to store bookings by their ID
     private int nextBookingId;
 
     public BookingManager() {
-        this.bookings = new ArrayList<>();
+        this.bookingsMap = new HashMap<>();
         this.nextBookingId = 1; // Start with booking ID 1 then increment from here
     }
 
     /**
      * Creates a new booking with the provided user, list of flights, and booking
-     * type,
-     * and adds it to the list of bookings.
+     * type, and adds it to the list of bookings.
      * 
      * @param user        The user making the booking.
      * @param flights     The list of flights included in the booking.
@@ -25,10 +27,9 @@ public class BookingManager {
      * @return The created Booking object.
      */
     public Booking createBooking(User user, List<Flight> flights, String bookingType) {
-        int bookingId = nextBookingId++; // auto increment ID value
+        int bookingId = nextBookingId++; // Auto increment ID value
         Booking newBooking = new Booking(bookingId, user, flights, bookingType);
-        // set bookingId, calculate totalPrice, generate tickets, etc. all here
-        bookings.add(newBooking);
+        bookingsMap.put(bookingId, newBooking); // Store the new booking in the map
         return newBooking;
     }
 
@@ -39,7 +40,12 @@ public class BookingManager {
      * @return true if the booking was successfully canceled, false otherwise.
      */
     public boolean cancelBooking(int bookingId) {
-        return bookings.removeIf(booking -> booking.getBookingId() == bookingId);
+        Booking booking = bookingsMap.get(bookingId);
+        if (booking != null && "active".equals(booking.getStatus())) {
+            booking.cancel(); // This should set the booking status to "canceled"
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -50,15 +56,42 @@ public class BookingManager {
      *         otherwise.
      */
     public Optional<Booking> getBookingById(int bookingId) {
-        return null;
+        return Optional.ofNullable(bookingsMap.get(bookingId));
     }
 
     /**
-     * Checks if the proposed itinerary forms a cyclic trip, returning to the same airport.
+     * A cyclic itinerary in the context of multi-stop flights (excluding valid
+     * round-trips) occurs when there's an unnecessary return to a previously
+     * visited city that doesn't serve as the final destination back to the starting
+     * point. For instance, a trip from A to B, then back to A, and then onward to C
+     * is cyclic because the return to A before continuing to C is unnecessary.
+     * 
      * @param itinerary List of flights representing the proposed itinerary.
      * @return true if the itinerary is cyclic, false otherwise.
      */
     public boolean isCyclicItinerary(List<Flight> itinerary) {
-        return false;
+        Set<String> visitedCities = new HashSet<>();
+        visitedCities.add(itinerary.get(0).getDepartureLocation()); // Add the starting city
+
+        for (int i = 0; i < itinerary.size(); i++) {
+            Flight flight = itinerary.get(i);
+            String departureCity = flight.getDepartureLocation();
+            String destinationCity = flight.getDestinationLocation();
+
+            // If the destination city has been visited before, it's potentially cyclic
+            if (visitedCities.contains(destinationCity)) {
+                // If it's the final leg and the destination is the starting city, it's a valid
+                // round-trip
+                if (i == itinerary.size() - 1 && destinationCity.equals(itinerary.get(0).getDepartureLocation())) {
+                    return false; // It's a valid round-trip, not cyclic
+                } else {
+                    return true; // Found a cycle
+                }
+            }
+            visitedCities.add(destinationCity); // Add the destination city as visited
+        }
+
+        return false; // No cyclic pattern found
     }
+
 }

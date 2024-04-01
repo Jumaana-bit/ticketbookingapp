@@ -13,6 +13,7 @@ public class Booking {
     private LocalDateTime bookingTime;
     private double totalPrice;
     private List<Ticket> tickets;
+    private String status;
 
     /**
      * Constructs a new Booking object with the given user, flights, and booking
@@ -31,11 +32,17 @@ public class Booking {
         this.bookingType = bookingType;
         this.bookingTime = LocalDateTime.now();
         this.tickets = new ArrayList<>();
+        this.status = "active";
+    }
+
+    // Method to cancel this booking
+    public void cancel() {
+        this.status = "canceled";
     }
 
     // Getters
 
-    public long getBookingId() {
+    public int getBookingId() {
         return bookingId;
     }
 
@@ -61,6 +68,10 @@ public class Booking {
 
     public List<Ticket> getTickets() {
         return tickets;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     // Setters
@@ -91,6 +102,10 @@ public class Booking {
 
     public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
