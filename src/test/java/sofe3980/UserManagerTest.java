@@ -10,64 +10,50 @@ import java.util.Optional;
 public class UserManagerTest {
 
     private UserManager userManager;
+    private User registeredUser;
+    private String name = "John Doe";
+    private String email = "johndoe@example.com";
+    private String password = "password";
+    private LocalDate dob = LocalDate.now();
+    private String passportNumber = "AA123456789";
 
     @Before
     public void setUp() throws Exception {
         userManager = new UserManager();
+
+        // Register a user before each test
+        registeredUser = userManager.registerUser(name, email, password, dob, passportNumber);
     }
 
     @Test
     public void testRegisterUser() {
-        String name = "John Doe";
-        String email = "johndoe@example.com";
-        String password = "password";
-        LocalDate dob = LocalDate.now();
-        String passportNumber = "AA123456789";
-
-        User user = userManager.registerUser(name, email, password, dob, passportNumber);
-
-        assertNotNull("User should be registered successfully", user);
-        assertEquals("Registered user should have the correct name", name, user.getName());
-        assertEquals("Registered user should have the correct email", email, user.getEmail());
+        assertNotNull("User should be registered successfully", registeredUser);
+        assertEquals("Registered user should have the correct name", name, registeredUser.getName());
+        assertEquals("Registered user should have the correct email", email, registeredUser.getEmail());
     }
 
     @Test
-    public void testLoginUserSuccessful() {
-        // Register a user
-        String name = "John Doe";
-        String email = "johndoe@example.com";
-        String password = "password";
-        LocalDate dob = LocalDate.now();
-        String passportNumber = "AA123456789";
-        User user = userManager.registerUser(name, email, password, dob, passportNumber);
+    public void testLoginUser() {
+        // Test successful login
+        Optional<User> successfulResult = userManager.loginUser(email, password);
+        assertTrue("User should be able to log in successfully with correct credentials", successfulResult.isPresent());
+        assertEquals("Logged in user should have the correct email", email, successfulResult.get().getEmail());
 
-        // System.out.println(user.toString());
-    
-        // Attempt to log in
-        Optional<User> result = userManager.loginUser(email, password);
-        assertTrue("User should be able to log in successfully", result.isPresent());
-        assertEquals("Logged in user should have the correct email", email, result.get().getEmail());
+        // Test unsuccessful login with incorrect email
+        Optional<User> wrongEmailResult = userManager.loginUser("wrongemail@example.com", password);
+        assertFalse("User should not be able to log in with incorrect email", wrongEmailResult.isPresent());
+
+        // Test unsuccessful login with incorrect password
+        Optional<User> wrongPasswordResult = userManager.loginUser(email, "wrongpassword");
+        assertFalse("User should not be able to log in with incorrect password", wrongPasswordResult.isPresent());
     }
-    
 
     @Test
-    public void testLoginUserUnsuccessful() {
-        // Register a user
-        String name = "John Doe";
-        String email = "johndoe@example.com";
-        String password = "password";
-        LocalDate dob = LocalDate.now();
-        String passportNumber = "AA123456789";
-        User user = userManager.registerUser(name, email, password, dob, passportNumber);
-
-        // System.out.println(user.toString()); 
-
-        // attempt login with wrong email, but correct password
-        Optional<User> result1 = userManager.loginUser("wrongemail@email.com", password);
-        assertFalse("User should not be able to log in with incorrect email", result1.isPresent());
-
-        // attempt login with correct email, but wrong password
-        Optional<User> result2 = userManager.loginUser(email, "wrongpassword");
-        assertFalse("User should not be able to log in with incorrect password", result2.isPresent());
+    public void testGetUserById() {
+        Optional<User> foundUser = userManager.getUserById(registeredUser.getUserId());
+        assertTrue("User should be found by ID", foundUser.isPresent());
+        assertEquals("Found user should have the correct name", name, foundUser.get().getName());
+        assertEquals("Found user should have the correct email", email, foundUser.get().getEmail());
     }
+
 }
