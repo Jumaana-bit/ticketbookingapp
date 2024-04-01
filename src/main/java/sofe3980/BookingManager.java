@@ -1,19 +1,17 @@
 package sofe3980;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class BookingManager {
 
-    // If we are using a database, this will change to use that instead for storing
-    // bookings
     private List<Booking> bookings;
+    private int nextBookingId;
 
     public BookingManager() {
         this.bookings = new ArrayList<>();
+        this.nextBookingId = 1; // Start with booking ID 1 then increment from here
     }
 
     /**
@@ -27,7 +25,8 @@ public class BookingManager {
      * @return The created Booking object.
      */
     public Booking createBooking(User user, List<Flight> flights, String bookingType) {
-        Booking newBooking = new Booking(user, flights, bookingType);
+        int bookingId = nextBookingId++; // auto increment ID value
+        Booking newBooking = new Booking(bookingId, user, flights, bookingType);
         // set bookingId, calculate totalPrice, generate tickets, etc. all here
         bookings.add(newBooking);
         return newBooking;

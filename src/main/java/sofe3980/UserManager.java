@@ -8,7 +8,7 @@ import java.util.Optional;
 public class UserManager {
 
     private List<User> users;
-    private int nextUserId; // Use long type for userId
+    private int nextUserId;
 
     public UserManager() {
         this.users = new ArrayList<>();

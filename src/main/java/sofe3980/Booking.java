@@ -24,7 +24,8 @@ public class Booking {
      * @param flights     The list of flights included in the booking.
      * @param bookingType The type of the booking (e.g., one-way, round-trip).
      */
-    public Booking(User user, List<Flight> flights, String bookingType) {
+    public Booking(int bookingId, User user, List<Flight> flights, String bookingType) {
+        this.bookingId = bookingId;
         this.user = user;
         this.flights = flights;
         this.bookingType = bookingType;
@@ -93,20 +94,38 @@ public class Booking {
     }
 
     /**
-     * Generates tickets for each flight in this booking.
+     * Generates tickets for each flight in this booking and stores them in the
+     * tickets list.
      * 
+     * @return A string representation of all generated tickets for confirmation or
+     *         debugging purposes.
      */
     public String generateTickets() {
-        // print the ticket info in some readable way
-        return null;
+        StringBuilder ticketInfo = new StringBuilder();
+
+        for (Flight flight : flights) {
+            Ticket ticket = new Ticket(this.bookingId, flight, user.getName());
+            tickets.add(ticket);
+
+            ticketInfo.append(ticket.toString()).append("\n");
+        }
+
+        return ticketInfo.toString();
     }
-    
+
     /**
-     * Generates tickets for each flight in this booking.
+     * Calculates the total price of the booking by summing the prices of all
+     * included flights.
      * 
+     * @return The total price of the booking.
      */
     public double calculateTotalPrice() {
-        return (Double) null;
+        totalPrice = 0; // Reset the total price before calculation
+        for (Flight flight : flights) {
+            totalPrice += flight.getPrice();
+        }
+
+        return totalPrice;
     }
 
     // A easier way to print and debug the Booking object fields during development

@@ -50,14 +50,14 @@ public class APIControllerTest {
     }
 
     // @Test
-    public void testCreateBooking() throws Exception {
-        Booking booking = new Booking(new User(1, "John Doe", "john.doe@example.com", "password", null, "123456789"), Collections.singletonList(new Flight(1, null, null, "Origin", "Destination", 100.00)), "one-way");
-        given(bookingManager.createBooking(Mockito.any(User.class), Mockito.anyList(), Mockito.anyString())).willReturn(booking);
+    // public void testCreateBooking() throws Exception {
+    //     Booking booking = new Booking(new User(1, "John Doe", "john.doe@example.com", "password", null, "123456789"), Collections.singletonList(new Flight(1, null, null, "Origin", "Destination", 100.00)), "one-way");
+    //     given(bookingManager.createBooking(Mockito.any(User.class), Mockito.anyList(), Mockito.anyString())).willReturn(booking);
 
-        mockMvc.perform(post("/api/bookings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"userId\":1,\"flights\":[{\"flightId\":1}],\"bookingType\":\"one-way\"}"))
-               .andExpect(status().isOk());
-        // Further assertions can be made based on the expected JSON response
-    }
+    //     mockMvc.perform(post("/api/bookings")
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .content("{\"userId\":1,\"flights\":[{\"flightId\":1}],\"bookingType\":\"one-way\"}"))
+    //            .andExpect(status().isOk());
+    //     // Further assertions can be made based on the expected JSON response
+    // }
 }
