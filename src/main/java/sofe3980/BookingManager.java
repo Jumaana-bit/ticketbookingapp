@@ -27,12 +27,20 @@ public class BookingManager {
      * @return The created Booking object.
      */
     public Booking createBooking(User user, List<Flight> flights, String bookingType) {
+        // Check if the itinerary is cyclic
+        if (isCyclicItinerary(flights)) {
+            // Handle the cyclic itinerary case. Options include returning null, throwing an exception, or other handling.
+            System.out.println("Cannot create booking: Itinerary is cyclic.");
+            return null; // Example: return null if the itinerary is cyclic.
+        }
+    
+        // If the itinerary is not cyclic, proceed to create the booking
         int bookingId = nextBookingId++; // Auto increment ID value
         Booking newBooking = new Booking(bookingId, user, flights, bookingType);
         bookingsMap.put(bookingId, newBooking); // Store the new booking in the map
         return newBooking;
     }
-
+    
     /**
      * Cancels an existing booking by removing it from the list of bookings.
      * 
@@ -75,7 +83,6 @@ public class BookingManager {
 
         for (int i = 0; i < itinerary.size(); i++) {
             Flight flight = itinerary.get(i);
-            String departureCity = flight.getDepartureLocation();
             String destinationCity = flight.getDestinationLocation();
 
             // If the destination city has been visited before, it's potentially cyclic
