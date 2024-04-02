@@ -13,18 +13,12 @@ spec:
     metadata:
       labels:
         app: booking-deployment
-    # spec:
-    #   containers:
-    #   - name: binarycalculator
-    #     image: gcr.io/ticketbookingapp/booking-deployment:latest
-    #     imagePullPolicy: Always
-    #     ports:
-    #     - containerPort: 80
-    spec:
-  containers:
-  - name: binarycalculator
-    image: gcr.io/useful-variety-415821/booking-deployment:latest
-    imagePullPolicy: Always
-    ports:
-    - containerPort: 80
+   spec:
+      containers:
+     - name: binarycalculator
+        image: gcr.io/ticketbookingapp/booking-deployment:latest
+       imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
 
