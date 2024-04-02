@@ -15,9 +15,8 @@ spec:
         app: booking-deployment
     spec:
       containers:
-      
-name: binarycalculator
-      image: gcr.io/ticketbookingapp/booking-deployment:latest
-      imagePullPolicy: Always
-      ports:
-containerPort: 80
+      - name: binarycalculator
+        image: gcr.io/ticketbookingapp/booking-deployment:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
