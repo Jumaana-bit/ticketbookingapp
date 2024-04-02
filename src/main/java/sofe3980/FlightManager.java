@@ -2,6 +2,7 @@ package sofe3980;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -18,7 +19,31 @@ public class FlightManager {
 
     public FlightManager() {
         this.flights = new ArrayList<>();
-        // Initialize the flights list with some dummy data later for testing
+
+        // Sample departure and destination locations for variance
+        String[] departureLocations = { "New York", "Chicago", "San Francisco", "Miami", "Seattle" };
+        String[] destinationLocations = { "Los Angeles", "Miami", "Seattle", "New York", "Chicago" };
+
+        // Start generating flights from tomorrow at 8:00 AM
+        LocalDateTime startDateTime = LocalDateTime.now().plusDays(1).withHour(8).withMinute(0);
+
+        // Generate flights for each day over two weeks
+        for (int day = 0; day < 14; day++) {
+            for (int i = 0; i < departureLocations.length; i++) {
+                int flightId = day * departureLocations.length + i + 1; // Unique flight ID
+                LocalDateTime departureTime = startDateTime.plusDays(day).plusHours(i * 2); // Every 2 hours for
+                                                                                            // variance
+                LocalDateTime arrivalTime = departureTime.plusHours(2 + i % 3).plusMinutes(i * 10 % 60); // 2 to 4 hours
+                                                                                                         // duration
+                String departureLocation = departureLocations[i];
+                String destinationLocation = destinationLocations[i];
+                double price = 100.00 + (i * 50) + (day * 10); // Price variance
+
+                Flight flight = new Flight(flightId, departureTime, arrivalTime, departureLocation, destinationLocation,
+                        price);
+                addFlight(flight);
+            }
+        }
     }
 
     // for adding flights to the list of all flights (used for adding dummy flights

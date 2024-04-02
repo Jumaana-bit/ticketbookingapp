@@ -33,7 +33,7 @@ public class BookingControllerTest {
 
     @Test
     public void testSignup() throws Exception {
-        mockMvc.perform(post("/booking/signup")
+        mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "John Doe")
                 .param("email", "john.doe@example.com")

@@ -1,5 +1,7 @@
 package sofe3980;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 // this class will be used to serve the web page UI
 @Controller
-@RequestMapping("/booking")
+// @RequestMapping("/booking")
 public class BookingController {
 
     private final BookingManager bookingManager;
@@ -46,7 +48,7 @@ public class BookingController {
         }
 
         // Redirect to the login page on successful registration
-        return "redirect:/booking/login";
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -61,15 +63,7 @@ public class BookingController {
         // Redirect based on successful or failed authentication
 
         // Example: redirect to a "dashboard" page on successful authentication
-        return "redirect:/booking/dashboard";
-    }
-
-    /**
-     * Displays the main menu options to the user.
-     * 
-     */
-    @GetMapping("/index")
-    public void displayMainMenu() {
+        return "redirect:/flights";
     }
 
     /**
@@ -77,27 +71,35 @@ public class BookingController {
      * Fetch available flights from the FlightManager and display them.
      */
     @GetMapping("/flights")
-    public void viewWeeklyFlights() {
+    public String viewWeeklyFlights(Model model) {
+        // Fetch the weekly flights using FlightManager
+        List<Flight> flights = flightManager.getWeeklyFlights();
+
+        // Add the flights to the model
+        model.addAttribute("flights", flights);
+
+        // Return the name of the Thymeleaf template that displays the flights
+        return "flights"; // Assuming you have a flights.html in the 'templates' directory
     }
 
-    /**
-     * Processes the booking request from the user.
-     * Take booking details from the request, create a booking via the
-     * BookingManager,
-     * 
-     * @param bookingDetails Details of the booking submitted by the user.
-     */
-    @PostMapping("/makeBooking")
-    public void createBooking(@RequestBody Booking bookingDetails) {
-    }
+    // /**
+    //  * Processes the booking request from the user.
+    //  * Take booking details from the request, create a booking via the
+    //  * BookingManager,
+    //  * 
+    //  * @param bookingDetails Details of the booking submitted by the user.
+    //  */
+    // @PostMapping("/makeBooking")
+    // public void createBooking(@RequestBody Booking bookingDetails) {
+    // }
 
-    /**
-     * Displays booking confirmation details to the user.
-     * After a booking is successfully made, show the user their confirmed booking
-     * details.
-     * 
-     * @param booking The booking to confirm.
-     */
-    public void displayBookingConfirmation(Booking booking) {
-    }
+    // /**
+    //  * Displays booking confirmation details to the user.
+    //  * After a booking is successfully made, show the user their confirmed booking
+    //  * details.
+    //  * 
+    //  * @param booking The booking to confirm.
+    //  */
+    // public void displayBookingConfirmation(Booking booking) {
+    // }
 }

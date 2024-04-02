@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airline Sign Up</title>
-    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
 <div class="container">
     <h2>Sign Up Now</h2>
-    <form th:action="@{/booking/signup}" th:object="${user}" method="post">
+    <form th:action="@{/signup}" th:object="${user}" method="post">
         <label for="fullname">Full Name</label>
         <input type="text" id="fullname" th:field="*{name}" placeholder="Enter your full name" required>
 

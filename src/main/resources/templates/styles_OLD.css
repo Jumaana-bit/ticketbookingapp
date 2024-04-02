@@ -1,0 +1,80 @@
+/* Reset default margin and padding */
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Center the content */
+.container {
+    max-width: 800px;
+    margin: 20px auto; /* Added margin */
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center; /* Center the text */
+}
+
+/* Style for flight listings */
+.flight-listings {
+    list-style-type: none;
+    padding: 0;
+}
+
+.flight-listing {
+    position: relative;
+    z-index: 0; /* Ensure the flight listing is above the flight details */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.flight-listing:hover {
+    transform: translateY(-5px);
+    z-index: 1; /* Bring the hovered flight listing to the top */
+}
+
+.flight-listing h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Style for flight details */
+.flight-details {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    z-index: 0; /* Set the default z-index for flight details */
+    width: 300px;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.flight-listing:hover .flight-details {
+    display: block;
+    z-index: 1; /* Ensure hovered flight details are on top */
+}
+
+/* Style for the "Book Now" button */
+.book-now {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* Style for the title subheading */
+.title-subheading {
+    margin-top: 20px;
+    font-size: 16px;
+}
