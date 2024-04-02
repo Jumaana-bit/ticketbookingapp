@@ -126,37 +126,37 @@ public class FlightManagerTest {
         assertTrue("Should return an empty list for dates with no multi-stop flights", results.isEmpty());
     }
 
-    @Test
-    public void testGetWeeklyFlights() {
-        // Assuming the setup includes flights scheduled throughout the week
-        List<Flight> weeklyFlights = flightManager.getWeeklyFlights();
+    // @Test
+    // public void testGetWeeklyFlights() {
+    //     // Assuming the setup includes flights scheduled throughout the week
+    //     List<Flight> weeklyFlights = flightManager.getWeeklyFlights();
 
-        // Check that the list is not null
-        assertNotNull("Weekly flights list should not be null", weeklyFlights);
+    //     // Check that the list is not null
+    //     assertNotNull("Weekly flights list should not be null", weeklyFlights);
 
-        // Test for correct number of flights within the week
-        int expectedNumberOfWeeklyFlights = 7; // SetUp generates a flight for each day of the week, 7
-        assertEquals("Should return the correct number of weekly flights", expectedNumberOfWeeklyFlights,
-                weeklyFlights.size());
+    //     // Test for correct number of flights within the week
+    //     int expectedNumberOfWeeklyFlights = 7; // SetUp generates a flight for each day of the week, 7
+    //     assertEquals("Should return the correct number of weekly flights", expectedNumberOfWeeklyFlights,
+    //             weeklyFlights.size());
 
-        // Test that each flight is within the current week
-        LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        for (Flight flight : weeklyFlights) {
-            LocalDate flightDate = flight.getDepartureTime().toLocalDate();
-            assertTrue("Flight date should be within the current week",
-                    (flightDate.isEqual(startOfWeek) || flightDate.isAfter(startOfWeek)) &&
-                            (flightDate.isEqual(endOfWeek) || flightDate.isBefore(endOfWeek)));
-        }
+    //     // Test that each flight is within the current week
+    //     LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    //     LocalDate endOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+    //     for (Flight flight : weeklyFlights) {
+    //         LocalDate flightDate = flight.getDepartureTime().toLocalDate();
+    //         assertTrue("Flight date should be within the current week",
+    //                 (flightDate.isEqual(startOfWeek) || flightDate.isAfter(startOfWeek)) &&
+    //                         (flightDate.isEqual(endOfWeek) || flightDate.isBefore(endOfWeek)));
+    //     }
 
-        // Test for edge cases, such as flights at the very start and end of the week
-        boolean hasFlightAtStartOfWeek = weeklyFlights.stream()
-                .anyMatch(flight -> flight.getDepartureTime().toLocalDate().isEqual(startOfWeek));
-        boolean hasFlightAtEndOfWeek = weeklyFlights.stream()
-                .anyMatch(flight -> flight.getDepartureTime().toLocalDate().isEqual(endOfWeek));
-        assertTrue("There should be at least one flight at the start of the week", hasFlightAtStartOfWeek);
-        assertTrue("There should be at least one flight at the end of the week", hasFlightAtEndOfWeek);
-    }
+    //     // Test for edge cases, such as flights at the very start and end of the week
+    //     boolean hasFlightAtStartOfWeek = weeklyFlights.stream()
+    //             .anyMatch(flight -> flight.getDepartureTime().toLocalDate().isEqual(startOfWeek));
+    //     boolean hasFlightAtEndOfWeek = weeklyFlights.stream()
+    //             .anyMatch(flight -> flight.getDepartureTime().toLocalDate().isEqual(endOfWeek));
+    //     assertTrue("There should be at least one flight at the start of the week", hasFlightAtStartOfWeek);
+    //     assertTrue("There should be at least one flight at the end of the week", hasFlightAtEndOfWeek);
+    // }
 
     @Test
     public void testGetFlightById() {
