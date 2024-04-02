@@ -136,7 +136,7 @@ public class FlightManagerTest {
         assertNotNull("Weekly flights list should not be null", weeklyFlights);
 
         // Test for correct number of flights within the week
-        int expectedNumberOfWeeklyFlights = 32; // SetUp generates a flight for each day of the week, 7
+        int expectedNumberOfWeeklyFlights = 35;
         assertEquals("Should return the correct number of weekly flights", expectedNumberOfWeeklyFlights,
                 weeklyFlights.size());
 

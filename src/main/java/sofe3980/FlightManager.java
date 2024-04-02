@@ -28,6 +28,14 @@ public class FlightManager {
         // Start generating flights from tomorrow at 8:00 AM
         LocalDateTime startDateTime = LocalDateTime.now().plusDays(1).withHour(8).withMinute(0);
 
+        // Add specific flights for cyclic itinerary testing
+        flights.add(new Flight(101, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(5),
+                "New York", "Los Angeles", 350.00));
+        flights.add(new Flight(102, LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(5),
+                "Los Angeles", "New York", 350.00));
+        flights.add(new Flight(103, LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(3),
+                "New York", "Miami", 250.00));
+
         // Generate flights for each day over two weeks
         for (int day = 0; day < 14; day++) {
             for (int i = 0; i < departureLocations.length; i++) {

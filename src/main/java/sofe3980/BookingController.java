@@ -206,6 +206,13 @@ public class BookingController {
             return "redirect:/flights";
         }
 
+        // Check for cyclic itinerary using the BookingManager
+        if (bookingManager.isCyclicItinerary(itinerary)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cyclic itinerary detected. Unable to generate tickets.");
+            return "redirect:/add-to-itinerary";
+        }
+
         List<Ticket> tickets = new ArrayList<>();
         Random random = new Random();
 
@@ -236,4 +243,14 @@ public class BookingController {
         return "ticket-success";
     }
 
+    @PostMapping("/remove-flight/{flightId}")
+    public String removeFlightFromItinerary(@PathVariable("flightId") int flightId, HttpSession session) {
+        List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
+        if (itinerary != null) {
+            itinerary.removeIf(flight -> flight.getFlightId() == flightId);
+            session.setAttribute("itinerary", itinerary);
+        }
+        return "redirect:/add-to-itinerary";
+    }
+    
 }

@@ -8,6 +8,12 @@
 <body>
     <div class="container">
         <h2>Your Itinerary</h2>
+
+        <!-- Error message display -->
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -27,6 +33,12 @@
                     <td th:text="${flight.departureTime}"></td>
                     <td th:text="${flight.arrivalTime}"></td>
                     <td th:text="${flight.price}"></td>
+                    <!-- Remove button -->
+                    <td>
+                        <form th:action="@{'/remove-flight/' + ${flight.flightId}}" method="post">
+                          <button type="submit">Remove</button>
+                        </form>
+                      </td>
                 </tr>
             </tbody>
         </table>

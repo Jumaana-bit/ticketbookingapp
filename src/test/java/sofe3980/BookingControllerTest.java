@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -90,18 +89,17 @@ public class BookingControllerTest {
                 .andExpect(model().attributeExists("flight"));
     }
 
-    // @Test
-    // public void testConfirmFlight() throws Exception {
-    //     mockMvc.perform(post("/confirm-flight/{id}", testFlight.getFlightId()))
-    //             .andExpect(status().is3xxRedirection())
-    //             .andExpect(redirectedUrl("/add-to-itinerary"));
-    // }
+    @Test
+    public void testConfirmFlight() throws Exception {
+        // Setup mock behavior to return the test flight when getFlightById is called
+        // with the testFlight's ID
+        given(flightManager.getFlightById(testFlight.getFlightId())).willReturn(Optional.of(testFlight));
 
-    // @Test
-    // public void testGenerateTickets() throws Exception {
-    //     mockMvc.perform(post("/generate-tickets"))
-    //             .andExpect(status().is3xxRedirection())
-    //             .andExpect(redirectedUrlPattern("/ticket-success*"));
-    // }
+        // Now when the /confirm-flight/{id} endpoint is hit, it should find the
+        // testFlight and not redirect to the error page
+        mockMvc.perform(post("/confirm-flight/{id}", testFlight.getFlightId()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/add-to-itinerary"));
+    }
 
 }
