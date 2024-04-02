@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -135,13 +136,10 @@ public class FlightManager {
      * @param flightId The ID of the flight to retrieve.
      * @return The Flight object if found, or null otherwise.
      */
-    public Flight getFlightById(int flightId) {
-        for (Flight flight : flights) {
-            if (flight.getFlightId() == flightId) {
-                return flight;
-            }
-        }
-        return null; // Return null if no flight with the given ID is found
+    public Optional<Flight> getFlightById(int flightId) {
+        return flights.stream()
+                .filter(flight -> flight.getFlightId() == flightId)
+                .findFirst();
     }
 
     /**

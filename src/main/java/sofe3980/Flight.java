@@ -38,7 +38,7 @@ public class Flight {
 
     // Getters
 
-    public long getFlightId() {
+    public int getFlightId() {
         return flightId;
     }
 
@@ -86,5 +86,19 @@ public class Flight {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    /**
+     * Returns a detailed description of the flight.
+     * 
+     * @return A string containing the flight details.
+     */
+    public String getDetails() {
+        return "Flight ID: " + flightId
+                + ", Departure: " + departureTime
+                + ", Arrival: " + arrivalTime
+                + ", From: " + origin
+                + ", To: " + destination
+                + ", Price: $" + price;
     }
 }

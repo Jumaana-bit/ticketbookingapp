@@ -1,11 +1,11 @@
-sofe3980\Booking.class
-sofe3980\Flight.class
 sofe3980\FlightManager.class
 sofe3980\Ticket.class
 sofe3980\User.class
-sofe3980\UserManager.class
 sofe3980\BookingController.class
 sofe3980\APIController.class
-sofe3980\App.class
 sofe3980\Utilities.class
+sofe3980\Booking.class
+sofe3980\Flight.class
+sofe3980\UserManager.class
+sofe3980\App.class
 sofe3980\BookingManager.class

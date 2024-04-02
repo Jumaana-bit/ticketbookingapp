@@ -8,18 +8,29 @@ body {
     align-items: center;
     min-height: 100vh;
     background-color: #f0f2f5;
-    padding-top: 40px; /* Added padding at the top */
+    padding-top: 40px;
+    /* Added padding at the top */
 }
 
 .container {
     background-color: #fff;
     padding: 20px;
-    margin: 20px 0; /* Added margin for top and bottom */
+    margin: 20px 0;
+    /* Added margin for top and bottom */
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 80%; /* Optional: to control the width of the container */
-    max-width: 1000px; /* Optional: to prevent the container from becoming too wide on large screens */
+    width: 80%;
+    /* Optional: to control the width of the container */
+    max-width: 1000px;
+    /* Optional: to prevent the container from becoming too wide on large screens */
 }
+
+.error-message {
+    color: red;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 
 form {
     display: flex;
@@ -61,11 +72,14 @@ table {
     margin-top: 20px;
 }
 
-table, th, td {
+table,
+th,
+td {
     border: 1px solid #ddd;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     text-align: left;
 }
@@ -77,4 +91,80 @@ th {
 
 tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+
+.search-form form {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.search-form input[type="text"],
+.search-form input[type="date"],
+.search-form input[type="submit"] {
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.search-form input[type="submit"] {
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.book-button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    /* Green background */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.book-button:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.back-button,
+.confirm-button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    /* Green background */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: inline-block;
+}
+
+.back-button:hover,
+.confirm-button:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.ticket {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.ticket h3 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.ticket p {
+    margin: 5px 0;
+    color: #666;
 }

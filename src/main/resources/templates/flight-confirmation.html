@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Flight Confirmation</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Flight Confirmation</h2>
+        <div>
+            <p>From: <span th:text="${flight.departureLocation}"></span></p>
+            <p>To: <span th:text="${flight.destinationLocation}"></span></p>
+            <p>Departure Time: <span th:text="${flight.departureTime}"></span></p>
+            <p>Arrival Time: <span th:text="${flight.arrivalTime}"></span></p>
+            <p>Price: <span th:text="${flight.price}"></span></p>
+            <!-- Confirmation form that submits to the confirm-flight endpoint -->
+            <form th:action="@{/confirm-flight/{id}(id=${flight.flightId})}" method="post">
+                <input type="submit" value="Confirm Flight" class="confirm-button">
+            </form>
+            <a href="/flights" class="back-button">Back to Search</a>
+        </div>
+    </div>
+</body>
+</html>

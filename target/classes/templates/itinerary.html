@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Itinerary</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Your Itinerary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight ID</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="flight : ${itinerary}">
+                    <td th:text="${flight.flightId}"></td>
+                    <td th:text="${flight.departureLocation}"></td>
+                    <td th:text="${flight.destinationLocation}"></td>
+                    <td th:text="${flight.departureTime}"></td>
+                    <td th:text="${flight.arrivalTime}"></td>
+                    <td th:text="${flight.price}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Total Price: <span th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT')}"></span></p>
+        <a href="/flights" class="back-button">Back to Search</a>
+        <form th:action="@{/generate-tickets}" method="post">
+            <input type="submit" value="Generate Tickets">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,20 +1,28 @@
 package sofe3980;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 // this class will be used to serve the web page UI
 @Controller
-// @RequestMapping("/booking")
 public class BookingController {
 
     private final BookingManager bookingManager;
@@ -58,12 +66,21 @@ public class BookingController {
     }
 
     @PostMapping("/authenticate")
-    public String authenticate(@RequestParam String email, @RequestParam String password) {
-        // Placeholder for authentication logic
-        // Redirect based on successful or failed authentication
+    public String authenticate(@RequestParam String email, @RequestParam String password,
+            RedirectAttributes redirectAttributes, HttpSession session) {
+        // Attempt to login user with provided credentials
+        Optional<User> user = userManager.loginUser(email, password);
 
-        // Example: redirect to a "dashboard" page on successful authentication
-        return "redirect:/flights";
+        if (user.isPresent()) {
+            // Store user's name in the session
+            session.setAttribute("userName", user.get().getName());
+            // Authentication successful, redirect to flights page
+            return "redirect:/flights";
+        } else {
+            // Authentication failed, redirect back to login page with error message
+            redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
+            return "redirect:/login";
+        }
     }
 
     /**
@@ -71,35 +88,152 @@ public class BookingController {
      * Fetch available flights from the FlightManager and display them.
      */
     @GetMapping("/flights")
-    public String viewWeeklyFlights(Model model) {
-        // Fetch the weekly flights using FlightManager
+    public String viewWeeklyFlights(@RequestParam Optional<String> from,
+            @RequestParam Optional<String> to,
+            @RequestParam Optional<String> dateString,
+            Model model, HttpSession session) {
+        final LocalDate[] searchDateContainer = { null };
+
+        dateString.ifPresent(d -> session.setAttribute("searchDate", d));
+
+        String sessionDateStr = (String) session.getAttribute("searchDate");
+        if (sessionDateStr != null) {
+            try {
+                searchDateContainer[0] = LocalDate.parse(sessionDateStr, DateTimeFormatter.ISO_DATE);
+            } catch (DateTimeParseException e) {
+                session.removeAttribute("searchDate");
+                model.addAttribute("dateError", "Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+
+        from.ifPresent(f -> session.setAttribute("searchFrom", f));
+        to.ifPresent(t -> session.setAttribute("searchTo", t));
+
+        String searchFrom = (String) session.getAttribute("searchFrom");
+        String searchTo = (String) session.getAttribute("searchTo");
+        String userName = (String) session.getAttribute("userName");
+
         List<Flight> flights = flightManager.getWeeklyFlights();
 
-        // Add the flights to the model
-        model.addAttribute("flights", flights);
+        flights = flights.stream()
+                .filter(flight -> searchFrom == null || flight.getDepartureLocation().equalsIgnoreCase(searchFrom))
+                .filter(flight -> searchTo == null || flight.getDestinationLocation().equalsIgnoreCase(searchTo))
+                .filter(flight -> searchDateContainer[0] == null
+                        || flight.getDepartureTime().toLocalDate().isEqual(searchDateContainer[0]))
+                .collect(Collectors.toList());
 
-        // Return the name of the Thymeleaf template that displays the flights
-        return "flights"; // Assuming you have a flights.html in the 'templates' directory
+        model.addAttribute("flights", flights);
+        model.addAttribute("userName", userName);
+        model.addAttribute("searchFrom", searchFrom);
+        model.addAttribute("searchTo", searchTo);
+        model.addAttribute("searchDate", sessionDateStr);
+
+        return "flights";
     }
 
-    // /**
-    //  * Processes the booking request from the user.
-    //  * Take booking details from the request, create a booking via the
-    //  * BookingManager,
-    //  * 
-    //  * @param bookingDetails Details of the booking submitted by the user.
-    //  */
-    // @PostMapping("/makeBooking")
-    // public void createBooking(@RequestBody Booking bookingDetails) {
-    // }
+    @GetMapping("/resetSearch")
+    public String resetSearch(HttpSession session) {
+        // Remove search criteria from the session
+        session.removeAttribute("searchFrom");
+        session.removeAttribute("searchTo");
+        session.removeAttribute("searchDate");
 
-    // /**
-    //  * Displays booking confirmation details to the user.
-    //  * After a booking is successfully made, show the user their confirmed booking
-    //  * details.
-    //  * 
-    //  * @param booking The booking to confirm.
-    //  */
-    // public void displayBookingConfirmation(Booking booking) {
-    // }
+        // Redirect back to the flights page
+        return "redirect:/flights";
+    }
+
+    @GetMapping("/book/{id}")
+    public String bookFlight(@PathVariable("id") int id, Model model) {
+        // Assuming you have a method to get a flight by its ID
+        Optional<Flight> flight = flightManager.getFlightById(id);
+
+        if (flight.isPresent()) {
+            model.addAttribute("flight", flight.get());
+            return "flight-confirmation"; // Return the view for booking confirmation
+        } else {
+            // Handle the case where the flight ID is not found
+            return "redirect:/flights"; // For example, redirect back to the flights list
+        }
+    }
+
+    @PostMapping("/confirm-flight/{id}")
+    public String confirmFlight(@PathVariable("id") int id, HttpSession session) {
+        Optional<Flight> flightOpt = flightManager.getFlightById(id);
+
+        if (flightOpt.isPresent()) {
+            Flight confirmedFlight = flightOpt.get();
+
+            // Retrieve or create the itinerary list from the session
+            List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
+            if (itinerary == null) {
+                itinerary = new ArrayList<>();
+                session.setAttribute("itinerary", itinerary);
+            }
+
+            // Add the confirmed flight to the itinerary
+            itinerary.add(confirmedFlight);
+
+            // Redirect to the itinerary page
+            return "redirect:/add-to-itinerary";
+        } else {
+            // Handle case where flight ID is not found, e.g., redirect to flights page with
+            // an error message
+            return "redirect:/flights?error=FlightNotFound";
+        }
+    }
+
+    @GetMapping("/add-to-itinerary")
+    public String viewItinerary(Model model, HttpSession session) {
+        List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
+        if (itinerary == null) {
+            itinerary = new ArrayList<>();
+        }
+        double totalPrice = itinerary.stream().mapToDouble(Flight::getPrice).sum();
+
+        model.addAttribute("itinerary", itinerary);
+        model.addAttribute("totalPrice", totalPrice);
+
+        return "itinerary";
+    }
+
+    @PostMapping("/generate-tickets")
+    public String generateTickets(HttpSession session, RedirectAttributes redirectAttributes, Model model) {
+        List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
+
+        // Check for a valid itinerary
+        if (itinerary == null || itinerary.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No flights selected for booking.");
+            return "redirect:/flights";
+        }
+
+        List<Ticket> tickets = new ArrayList<>();
+        Random random = new Random();
+
+        for (Flight flight : itinerary) {
+            Ticket ticket = new Ticket();
+
+            // Randomly generate a ticket number (assuming a format, adjust as needed)
+            String ticketNumber = "TKT" + (100000 + random.nextInt(900000));
+            ticket.setTicketNumber(ticketNumber);
+
+            // Randomly generate a seat number (assuming format "A1", "B2", etc.)
+            char seatRow = (char) ('A' + random.nextInt(6)); // For rows A-F
+            int seatColumn = 1 + random.nextInt(10); // For columns 1-10
+            String seatNumber = seatRow + String.valueOf(seatColumn);
+            ticket.setSeatNumber(seatNumber);
+
+            // Set other ticket properties
+            ticket.setFlightDetails(flight.getDetails()); // Assuming a method to get flight details
+            ticket.setPassengerName("John Doe"); // Example, replace with actual passenger name
+
+            tickets.add(ticket);
+        }
+
+        // Add tickets to the model to display them on the success page
+        model.addAttribute("tickets", tickets);
+
+        // Redirect to the ticket-success page
+        return "ticket-success";
+    }
+
 }

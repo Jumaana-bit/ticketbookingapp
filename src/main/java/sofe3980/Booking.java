@@ -119,7 +119,9 @@ public class Booking {
         StringBuilder ticketInfo = new StringBuilder();
 
         for (Flight flight : flights) {
-            Ticket ticket = new Ticket(this.bookingId, flight, user.getName());
+            String ticketNumber = "";
+            String seatNumber = "";
+            Ticket ticket = new Ticket(this.bookingId, flight, user.getName(), ticketNumber, seatNumber);
             tickets.add(ticket);
 
             ticketInfo.append(ticket.toString()).append("\n");

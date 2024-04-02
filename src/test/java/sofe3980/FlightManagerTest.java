@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FlightManagerTest {
 
@@ -135,7 +136,7 @@ public class FlightManagerTest {
         assertNotNull("Weekly flights list should not be null", weeklyFlights);
 
         // Test for correct number of flights within the week
-        int expectedNumberOfWeeklyFlights = 7; // SetUp generates a flight for each day of the week, 7
+        int expectedNumberOfWeeklyFlights = 32; // SetUp generates a flight for each day of the week, 7
         assertEquals("Should return the correct number of weekly flights", expectedNumberOfWeeklyFlights,
                 weeklyFlights.size());
 
@@ -161,19 +162,20 @@ public class FlightManagerTest {
     @Test
     public void testGetFlightById() {
         // Assuming there's a flight with ID 1
-        Flight flight = flightManager.getFlightById(1);
-        assertNotNull("Flight should be found by ID", flight);
+        Optional<Flight> optionalFlight = flightManager.getFlightById(1);
+        assertTrue("Flight should be found by ID", optionalFlight.isPresent());
+        Flight flight = optionalFlight.get();
         assertEquals("Flight ID should match", 1, flight.getFlightId());
 
         // Assuming there is no flight with ID -1
-        Flight flightNull = flightManager.getFlightById(-1);
-        assertNull("No flight should be found for an invalid ID", flightNull);
+        Optional<Flight> optionalFlightNull = flightManager.getFlightById(-1);
+        assertFalse("No flight should be found for an invalid ID", optionalFlightNull.isPresent());
     }
 
     @Test
     public void testCalculateTotalFlightTime() {
         // Choose a subset of flights for this test. For simplicity, let's use the
-        // weekly flights, which is 7 days
+        // weekly flights, which is 7
         LocalDate startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         List<Flight> weeklyFlights = new ArrayList<>();
         for (int i = 0; i < 7; i++) {

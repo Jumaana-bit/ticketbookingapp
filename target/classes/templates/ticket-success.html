@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Your Tickets</h2>
+        <div th:each="ticket : ${tickets}" class="ticket">
+            <h3>Ticket #[[ ${ticket.ticketNumber} ]]</h3>
+            <p><strong>Flight:</strong> [[ ${ticket.flightDetails} ]]</p>
+            <p><strong>Passenger:</strong> [[ ${ticket.passengerName} ]]</p>
+            <p><strong>Seat:</strong> [[ ${ticket.seatNumber} ]]</p>
+        </div>
+        <a href="/flights" class="back-button">Back to Search</a>
+    </div>
+</body>
+</html>
