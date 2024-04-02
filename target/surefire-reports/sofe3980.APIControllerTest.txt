@@ -1,11 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: sofe3980.APIControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2.058 s <<< FAILURE! - in sofe3980.APIControllerTest
-testGetAvailableFlights  Time elapsed: 0.244 s  <<< FAILURE!
-java.lang.AssertionError: 
-JSON path "$[0].flightId"
-Expected: is <1L>
-     but: was <1>
-	at sofe3980.APIControllerTest.testGetAvailableFlights(APIControllerTest.java:61)
-
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.856 s - in sofe3980.APIControllerTest

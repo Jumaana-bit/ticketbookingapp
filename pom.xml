@@ -67,6 +67,13 @@
             <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- Hamcrest library, adds useful functions for JUnit -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+        <scope>test</scope>
+        </dependency>
         <!-- JavaFX Controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
