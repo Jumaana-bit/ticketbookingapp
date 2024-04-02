@@ -1,6 +1,7 @@
 package sofe3980;
 
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class User {
 
@@ -8,8 +9,16 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // This line is added to specify the date format
     private LocalDate dob;
+    
     private String passportNumber;
+
+    // No-argument constructor for Spring MVC
+    // so an empty User can be created and populated with form data
+    public User() {
+    }
 
     /**
      * Constructs a User with the specified name and email.
@@ -18,7 +27,7 @@ public class User {
      * @param email The email address of the user.
      */
     public User(int userId, String name, String email, String password, LocalDate dob, String passportNumber) {
-        this.userId = userId;   // maybe we can autogenerate this
+        this.userId = userId; // maybe we can autogenerate this
         this.name = name;
         this.email = email;
         this.password = password;
@@ -85,6 +94,8 @@ public class User {
                 "userId=" + userId +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", dob='" + dob + '\'' +
+                ", passportNumber='" + passportNumber + '\'' +
                 '}';
     }
 }

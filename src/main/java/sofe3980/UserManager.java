@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserManager {
 
     private Map<Integer, User> users; // Use HashMap to store users by their ID
