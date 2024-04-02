@@ -2,6 +2,10 @@
 
 This application is a flight ticket booking system designed for the SOFE3980 Group 26 Project. Built using Java, Spring Boot, and Thymeleaf, it offers a platform for users to search, book, and manage flight itineraries. The project focused on designing and implementing tests using JUnit and Mockito.
 
+![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/ad6762af-5916-490a-94ad-2f932003a0cb)
+![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/ee7557a5-ef53-4fce-9c8b-f97a9866ea2f)
+![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/e919bac0-bd0b-4d82-958e-aa9b318e7191)
+
 ## Key Features
 
 - **Flight Search**: Users can search for flights based on origin, destination, and date. The search functionality is flexible, allowing for broad searches or more specific queries.
