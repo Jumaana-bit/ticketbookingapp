@@ -7,7 +7,9 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FlightManager {
 
     // If we are using a database, this will change to use that instead for storing

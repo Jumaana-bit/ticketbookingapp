@@ -54,6 +54,12 @@
             <version>2.4.5</version>
             <scope>test</scope>
         </dependency>
+        <!-- Tomcat server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- Mockito Core -->
         <dependency>
             <groupId>org.mockito</groupId>

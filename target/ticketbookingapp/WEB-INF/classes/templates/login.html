@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airline Login</title>
+  <!-- Include Material Icons stylesheet -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Airline Login</h2>
+  <form action="login.php" method="post">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+    <label for="password">Password</label>
+    <div class="password-input">
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      <!-- Material Icons button for toggling password visibility -->
+      <button type="button" id="Visibility" class="password-toggle"><i class="material-icons">visibility</i></button>
+    </div>
+
+    <input type="submit" value="Login">
+  </form>
+</div>
+
+<script>
+  document.getElementById("Visibility").addEventListener("click", function() {
+    var passwordField = document.getElementById("password");
+    var icon = this.querySelector("i");
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      icon.textContent = "visibilityoff";
+    } else {
+      passwordField.type = "password";
+      icon.textContent = "visibility";
+    }
+  });
+  function handleSubmit(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Get the values of email and password
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+}
+</script>
+
+</body>
+</html>
