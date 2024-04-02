@@ -29,10 +29,15 @@
     <dependencies>
         <!-- Spring Boot Starter Web -->
         <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <version>2.4.5</version>
-    </dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.4.5</version>
+        </dependency>
+        <!-- Thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <!-- JUnit Vintage Engine -->
         <dependency>
             <groupId>org.junit.vintage</groupId>
@@ -66,6 +71,13 @@
             <artifactId>mockito-core</artifactId>
             <version>3.6.0</version>
             <scope>test</scope>
+        </dependency>
+        <!-- Hamcrest library, adds useful functions for JUnit -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+        <scope>test</scope>
         </dependency>
         <!-- JavaFX Controls -->
         <dependency>
