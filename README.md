@@ -3,8 +3,6 @@
 This application is a flight ticket booking system designed for the SOFE3980 Group 26 Project. Built using Java, Spring Boot, and Thymeleaf, it offers a platform for users to search, book, and manage flight itineraries. The project focused on designing and implementing tests using JUnit and Mockito.
 
 ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/ad6762af-5916-490a-94ad-2f932003a0cb)
-![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/ee7557a5-ef53-4fce-9c8b-f97a9866ea2f)
-![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/e919bac0-bd0b-4d82-958e-aa9b318e7191)
 
 ## Key Features
 
@@ -14,7 +12,8 @@ This application is a flight ticket booking system designed for the SOFE3980 Gro
 
 - **Booking Confirmation**: Before finalizing a booking, users are presented with a confirmation page detailing the flight, allowing them to review their choice before adding it to their itinerary.
 
-- **Cyclic Itinerary Check**: The system includes logic to prevent users from creating cyclic itineraries, enhancing the user experience by ensuring travel plans are logical and sequential.
+- **Cyclic Itinerary Check**: The system includes logic to prevent users from creating cyclic itineraries, enhancing the user experience by ensuring travel plans are logical and sequential. Example:
+  ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/6e69c082-4616-4226-8c97-aca14481618d)
 
 - **User Authentication**: The application includes a signup and login system, with pages for users to create an account and sign in to access their personal dashboard.
 
@@ -40,7 +39,7 @@ This project emphasizes the importance of rigorous testing to ensure the reliabi
 - The project adopts a **Test Driven Development** approach, where tests are written before the actual implementation. This methodology encourages robust design and ensures that the codebase remains clean and testable.
 
 ### Continuous Integration / Continuous Delivery
-- A **Continuous Integration** pipeline is set up to automatically run tests on each commit, ensuring that new changes do not break existing functionalities. This practice helps in maintaining code quality throughout the development process.
+- A **Continuous Integration** pipeline is set up to automatically run tests on each commit, ensuring that new changes do not break existing functionalities. This practice helps in maintaining code quality throughout the development process. ***VIDEO DEMONSTRATION of our Jenkins CI/CD Pipeline:*** https://drive.google.com/file/d/1mV7QwNVO7BXdqZsM6qnvfrAVqCiIv49C/view?usp=sharing 
 
 ## Usage
 
