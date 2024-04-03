@@ -12,6 +12,10 @@ public class Flight {
     private String destination;
     private double price;
 
+    // New field to hold the ID of the corresponding flight (e.g., return flight for
+    // a round trip)
+    private Integer correspondingFlightId; // Use Integer to allow for null values
+
     // Constructor
     public Flight(int flightId, LocalDateTime departureTime, LocalDateTime arrivalTime,
             String departureLocation, String destinationLocation, double price) {
@@ -38,6 +42,11 @@ public class Flight {
 
     // Getters
 
+    // Getter for the corresponding flight ID
+    public Integer getCorrespondingFlightId() {
+        return correspondingFlightId;
+    }
+
     public int getFlightId() {
         return flightId;
     }
@@ -50,11 +59,11 @@ public class Flight {
         return arrivalTime;
     }
 
-    public String getDepartureLocation() {
+    public String getOrigin() {
         return origin;
     }
 
-    public String getDestinationLocation() {
+    public String getDestination() {
         return destination;
     }
 
@@ -76,16 +85,21 @@ public class Flight {
         this.arrivalTime = arrivalTime;
     }
 
-    public void setDepartureLocation(String departureLocation) {
+    public void setOrigin(String departureLocation) {
         this.origin = departureLocation;
     }
 
-    public void setDestinationLocation(String destinationLocation) {
+    public void setDestination(String destinationLocation) {
         this.destination = destinationLocation;
     }
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    // Setter for the corresponding flight ID
+    public void setCorrespondingFlightId(Integer correspondingFlightId) {
+        this.correspondingFlightId = correspondingFlightId;
     }
 
     /**

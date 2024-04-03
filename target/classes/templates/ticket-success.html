@@ -2,19 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Tickets</title>
+    <title>Your Tickets</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Your Tickets</h2>
-        <div th:each="ticket : ${tickets}" class="ticket">
-            <h3>Ticket #[[ ${ticket.ticketNumber} ]]</h3>
-            <p><strong>Flight:</strong> [[ ${ticket.flightDetails} ]]</p>
-            <p><strong>Passenger:</strong> [[ ${ticket.passengerName} ]]</p>
-            <p><strong>Seat:</strong> [[ ${ticket.seatNumber} ]]</p>
-        </div>
-        <a href="/flights" class="back-button">Back to Search</a>
+<div class="container">
+    <h2>Your Tickets</h2>
+    <div th:each="ticket : ${tickets}" class="ticket">
+        <p>Ticket Number: <span th:text="${ticket.ticketNumber}"></span></p>
+        <p>Seat Number: <span th:text="${ticket.seatNumber}"></span></p>
+        <p>Flight: <span th:text="${ticket.flight.flightId}"></span> - 
+            <span th:text="${ticket.flight.origin} + ' to ' + ${ticket.flight.destination}"></span></p>
+        <p>Departure Time: <span th:text="${#temporals.format(ticket.flight.departureTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+        <p>Arrival Time: <span th:text="${#temporals.format(ticket.flight.arrivalTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+        <p>Duration: <span th:text="${ticket.flight.calculateDuration()}"></span></p>
+        <p>Price: $<span th:text="${ticket.flight.price}"></span></p>
     </div>
+</div>
 </body>
 </html>

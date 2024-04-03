@@ -66,7 +66,7 @@ public class BookingControllerTest {
                 .param("email", testUser.getEmail())
                 .param("password", testUser.getPassword()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/flights"));
+                .andExpect(redirectedUrl("/search"));
     }
 
     @Test

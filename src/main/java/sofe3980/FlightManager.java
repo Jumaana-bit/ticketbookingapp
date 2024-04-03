@@ -14,45 +14,111 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlightManager {
 
-    // If we are using a database, this will change to use that instead for storing
-    // flights
     private List<Flight> flights;
+    private int flightIdCounter = 1;
+    String[] departureLocations = { "New York", "Los Angeles", "Chicago", "Miami", "Dallas" };
+    String[] destinationLocations = { "Los Angeles", "Chicago", "Miami", "Dallas", "New York" };
 
     public FlightManager() {
-        this.flights = new ArrayList<>();
+        flights = new ArrayList<>();
+        initializeFlights();
+    }
 
-        // Sample departure and destination locations for variance
-        String[] departureLocations = { "New York", "Chicago", "San Francisco", "Miami", "Seattle" };
-        String[] destinationLocations = { "Los Angeles", "Miami", "Seattle", "New York", "Chicago" };
+    private void initializeFlights() {
+        // Set startDateTime to a fixed date for testing
+        LocalDateTime startDateTime = LocalDateTime.of(2024, 4, 1, 0, 0);
 
-        // Start generating flights from tomorrow at 8:00 AM
-        LocalDateTime startDateTime = LocalDateTime.now().plusDays(1).withHour(8).withMinute(0);
+        Flight departureFlight = generateFlight(3, "New York", "Los Angeles", startDateTime); // Apr 4
+        Flight returnFlight = generateFlight(4, "Los Angeles", "New York", startDateTime); // Apr 5
 
-        // Add specific flights for cyclic itinerary testing
-        flights.add(new Flight(101, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(1).plusHours(5),
-                "New York", "Los Angeles", 350.00));
-        flights.add(new Flight(102, LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(2).plusHours(5),
-                "Los Angeles", "New York", 350.00));
-        flights.add(new Flight(103, LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(3),
-                "New York", "Miami", 250.00));
+        departureFlight.setCorrespondingFlightId(returnFlight.getFlightId());
+        returnFlight.setCorrespondingFlightId(departureFlight.getFlightId());
 
-        // Generate flights for each day over two weeks
-        for (int day = 0; day < 14; day++) {
-            for (int i = 0; i < departureLocations.length; i++) {
-                int flightId = day * departureLocations.length + i + 1; // Unique flight ID
-                LocalDateTime departureTime = startDateTime.plusDays(day).plusHours(i * 2); // Every 2 hours for
-                                                                                            // variance
-                LocalDateTime arrivalTime = departureTime.plusHours(2 + i % 3).plusMinutes(i * 10 % 60); // 2 to 4 hours
-                                                                                                         // duration
-                String departureLocation = departureLocations[i];
-                String destinationLocation = destinationLocations[i];
-                double price = 100.00 + (i * 50) + (day * 10); // Price variance
+        addFlight(departureFlight);
+        addFlight(returnFlight);
+    }
 
-                Flight flight = new Flight(flightId, departureTime, arrivalTime, departureLocation, destinationLocation,
-                        price);
-                addFlight(flight);
-            }
+    private Flight generateFlight(int dayOffset, String departure, String destination, LocalDateTime start) {
+        LocalDateTime departureTime = start.plusDays(dayOffset);
+        LocalDateTime arrivalTime = departureTime.plusHours(5); // Assuming a 5-hour flight for simplicity
+        int flightId = flightIdCounter++; // Use the counter for flight ID and increment it
+
+        return new Flight(flightId, departureTime, arrivalTime, departure, destination, 300.00);
+    }
+
+    public List<Flight> searchFlights(String from, String to, LocalDate departureDate) {
+        List<Flight> resultFlights = new ArrayList<>();
+
+        // Filter for departure flights
+        List<Flight> departureFlights = flights.stream()
+                .filter(flight -> flight.getOrigin().equalsIgnoreCase(from) &&
+                        flight.getDestination().equalsIgnoreCase(to) &&
+                        (departureDate == null || flight.getDepartureTime().toLocalDate().isEqual(departureDate)))
+                .collect(Collectors.toList());
+
+        for (Flight depFlight : departureFlights) {
+            resultFlights.add(depFlight); // Add the departure flight
+
+            // Find and add the corresponding return flight, if any
+            flights.stream()
+                    .filter(flight -> flight.getFlightId() == depFlight.getCorrespondingFlightId()) // Corrected this
+                                                                                                    // line
+                    .findFirst()
+                    .ifPresent(resultFlights::add);
         }
+
+        return resultFlights;
+    }
+
+    public List<Flight> searchFlights(String from, String to, LocalDate departureDate, LocalDate returnDate) {
+        System.out.println("Starting flight search...");
+        System.out.println("From: " + from + ", To: " + to + ", Departure Date: " + departureDate + ", Return Date: "
+                + returnDate);
+
+        List<Flight> resultFlights = new ArrayList<>();
+
+        // Filter for departure flights
+        List<Flight> departureFlights = flights.stream()
+                .filter(flight -> {
+                    boolean matches = flight.getOrigin().equalsIgnoreCase(from) &&
+                            flight.getDestination().equalsIgnoreCase(to) &&
+                            (departureDate == null || flight.getDepartureTime().toLocalDate().isEqual(departureDate));
+                    if (matches) {
+                        System.out.println("Matching departure flight found: " + flight);
+                    }
+                    return matches;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("Departure flights found: " + departureFlights.size());
+
+        // If a return date is provided, find the corresponding return flights
+        if (returnDate != null) {
+            List<Flight> returnFlights = flights.stream()
+                    .filter(flight -> {
+                        boolean matches = flight.getOrigin().equalsIgnoreCase(to) &&
+                                flight.getDestination().equalsIgnoreCase(from) &&
+                                flight.getDepartureTime().toLocalDate().isEqual(returnDate);
+                        if (matches) {
+                            System.out.println("Matching return flight found: " + flight);
+                        }
+                        return matches;
+                    })
+                    .collect(Collectors.toList());
+
+            System.out.println("Return flights found: " + returnFlights.size());
+
+            // Combine departure and return flights
+            resultFlights.addAll(departureFlights);
+            resultFlights.addAll(returnFlights);
+        } else {
+            // If no return date is provided, just add the departure flights
+            resultFlights.addAll(departureFlights);
+        }
+
+        System.out.println("Total flights found: " + resultFlights.size());
+
+        return resultFlights;
     }
 
     // for adding flights to the list of all flights (used for adding dummy flights
@@ -72,8 +138,8 @@ public class FlightManager {
     public List<Flight> searchDirectFlights(String from, String to, LocalDate date) {
         List<Flight> matchingFlights = new ArrayList<>();
         for (Flight flight : flights) {
-            if (flight.getDepartureLocation().equals(from) &&
-                    flight.getDestinationLocation().equals(to) &&
+            if (flight.getOrigin().equals(from) &&
+                    flight.getDestination().equals(to) &&
                     flight.getDepartureTime().toLocalDate().equals(date)) {
                 matchingFlights.add(flight);
             }
@@ -95,15 +161,15 @@ public class FlightManager {
 
         // First, find all flights departing from the origin on the specified date
         List<Flight> departingFlights = flights.stream()
-                .filter(f -> f.getDepartureLocation().equals(from) && f.getDepartureTime().toLocalDate().equals(date))
+                .filter(f -> f.getOrigin().equals(from) && f.getDepartureTime().toLocalDate().equals(date))
                 .collect(Collectors.toList());
 
         // Then, for each departing flight, find connecting flights from the arrival
         // location to the final destination
         for (Flight firstLeg : departingFlights) {
             List<Flight> connectingFlights = flights.stream()
-                    .filter(f -> f.getDepartureLocation().equals(firstLeg.getDestinationLocation()) &&
-                            f.getDestinationLocation().equals(to) &&
+                    .filter(f -> f.getOrigin().equals(firstLeg.getDestination()) &&
+                            f.getDestination().equals(to) &&
                             f.getDepartureTime().isAfter(firstLeg.getArrivalTime()))
                     .collect(Collectors.toList());
 

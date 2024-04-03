@@ -81,17 +81,17 @@ public class BookingManager {
      */
     public boolean isCyclicItinerary(List<Flight> itinerary) {
         Set<String> visitedCities = new HashSet<>();
-        visitedCities.add(itinerary.get(0).getDepartureLocation()); // Add the starting city
+        visitedCities.add(itinerary.get(0).getOrigin()); // Add the starting city
 
         for (int i = 0; i < itinerary.size(); i++) {
             Flight flight = itinerary.get(i);
-            String destinationCity = flight.getDestinationLocation();
+            String destinationCity = flight.getDestination();
 
             // If the destination city has been visited before, it's potentially cyclic
             if (visitedCities.contains(destinationCity)) {
                 // If it's the final leg and the destination is the starting city, it's a valid
                 // round-trip
-                if (i == itinerary.size() - 1 && destinationCity.equals(itinerary.get(0).getDepartureLocation())) {
+                if (i == itinerary.size() - 1 && destinationCity.equals(itinerary.get(0).getOrigin())) {
                     return false; // It's a valid round-trip, not cyclic
                 } else {
                     return true; // Found a cycle

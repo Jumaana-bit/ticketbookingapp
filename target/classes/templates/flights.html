@@ -4,62 +4,67 @@
     <meta charset="UTF-8">
     <title>Flights</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        function toggleTimeFormat() {
+            var times = document.querySelectorAll('.time');
+            times.forEach(function(time) {
+                time.classList.toggle('hidden');
+            });
+        }
+    </script>
 </head>
 <body>
+<div class="container">
+    <h2>Flight Schedule</h2>
+    <button onclick="toggleTimeFormat()">Toggle Time Format</button>
 
-    <div class="search-form">
-        <h2>Search Flights</h2>
-        <form th:action="@{/flights}" method="get">
-            <label for="from">From:</label>
-            <input type="text" id="from" name="from" placeholder="Origin">
-
-            <label for="to">To:</label>
-            <input type="text" id="to" name="to" placeholder="Destination">
-
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date">
-
-            <button type="submit" class="btn btn-primary">Search</button>
-            <a href="/resetSearch" class="btn btn-primary">Reset</a>
-        </form>
-        <!-- Button to go to the itinerary page, positioned under the reset button -->
-        <div class="itinerary-button">
-            <a href="/add-to-itinerary" class="btn btn-primary">View Itinerary</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- Display user's name -->
-        <div th:if="${userName}">
-            <p>Welcome, <span th:text="${userName}">User</span>!</p>
+    <form action="/book-and-generate-tickets" method="post">
+        <!-- Section for Departure Flights -->
+        <h3>Select Departure Flight</h3>
+        <div>
+            <th:block th:each="flight : ${departureFlights}">
+                <input type="radio" th:id="${'depFlight-' + flight.flightId}" name="depId" th:value="${flight.flightId}" required>
+                <label th:for="${'depFlight-' + flight.flightId}">
+                    Flight: <span th:text="${flight.flightId}"></span> |
+                    <span th:text="${flight.origin} + ' to ' + ${flight.destination}"></span> |
+                    Date: <span th:text="${#temporals.format(flight.departureTime, 'yyyy-MM-dd')}"></span> |
+                    Depart: <span class="time" th:text="${#temporals.format(flight.departureTime, 'HH:mm')}"></span>
+                    <span class="time hidden" th:text="${#temporals.format(flight.departureTime, 'hh:mm a')}"></span> |
+                    Arrive: <span class="time" th:text="${#temporals.format(flight.arrivalTime, 'HH:mm')}"></span>
+                    <span class="time hidden" th:text="${#temporals.format(flight.arrivalTime, 'hh:mm a')}"></span> |
+                    Duration: <span th:text="${flight.calculateDuration()}"></span> |
+                    Price: $<span th:text="${flight.price}"></span>
+                </label><br>
+            </th:block>
         </div>
 
-        <h2>Flight Schedule</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Departure</th>
-                    <th>Destination</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="flight : ${flights}">
-                    <td th:text="${flight.departureLocation}"></td>
-                    <td th:text="${flight.destinationLocation}"></td>
-                    <td th:text="${flight.departureTime}"></td>
-                    <td th:text="${flight.arrivalTime}"></td>
-                    <td th:text="${flight.price}"></td>
-                    <td>
-                        <!-- Book button -->
-                        <a th:href="@{/book/{id}(id=${flight.flightId})}" class="book-button">Book</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <!-- Section for Return Flights -->
+        <h3>Select Return Flight</h3>
+        <div>
+            <th:block th:each="flight : ${returnFlights}">
+                <input type="radio" th:id="${'retFlight-' + flight.flightId}" name="retId" th:value="${flight.flightId}" required>
+                <label th:for="${'retFlight-' + flight.flightId}">
+                    Flight: <span th:text="${flight.flightId}"></span> |
+                    <span th:text="${flight.origin} + ' to ' + ${flight.destination}"></span> |
+                    Date: <span th:text="${#temporals.format(flight.departureTime, 'yyyy-MM-dd')}"></span> |
+                    Depart: <span class="time" th:text="${#temporals.format(flight.departureTime, 'HH:mm')}"></span>
+                    <span class="time hidden" th:text="${#temporals.format(flight.departureTime, 'hh:mm a')}"></span> |
+                    Arrive: <span class="time" th:text="${#temporals.format(flight.arrivalTime, 'HH:mm')}"></span>
+                    <span class="time hidden" th:text="${#temporals.format(flight.arrivalTime, 'hh:mm a')}"></span> |
+                    Duration: <span th:text="${flight.calculateDuration()}"></span> |
+                    Price: $<span th:text="${flight.price}"></span>
+                </label><br>
+            </th:block>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Book and Generate Tickets</button>
+    </form>
+</div>
 </body>
 </html>

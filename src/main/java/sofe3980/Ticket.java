@@ -78,8 +78,8 @@ public class Ticket {
                 "Ticket Number: " + ticketNumber + "\n" +
                 "Seat: " + seatNumber + "\n" +
                 "Flight: " + flight.getFlightId() + "\n" +
-                "From: " + flight.getDepartureLocation() + " at " + flight.getDepartureTime() + "\n" +
-                "To: " + flight.getDestinationLocation() + " at " + flight.getArrivalTime() + "\n" +
+                "From: " + flight.getOrigin() + " at " + flight.getDepartureTime() + "\n" +
+                "To: " + flight.getDestination() + " at " + flight.getArrivalTime() + "\n" +
                 "Price: $" + flight.getPrice();
     }
 }

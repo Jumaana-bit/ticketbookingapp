@@ -60,8 +60,8 @@ public class FlightManagerTest {
         if (!results.isEmpty()) {
             // Test for correct flight data
             Flight resultFlight = results.get(0);
-            assertEquals("Departure location should match", "CityA", resultFlight.getDepartureLocation());
-            assertEquals("Destination location should match", "CityB", resultFlight.getDestinationLocation());
+            assertEquals("Departure location should match", "CityA", resultFlight.getOrigin());
+            assertEquals("Destination location should match", "CityB", resultFlight.getDestination());
             // Add more detailed assertions as needed, like checking times, flight IDs, etc.
         }
 
@@ -98,20 +98,20 @@ public class FlightManagerTest {
 
             // Verify the first leg is from "CityX" to "CityY"
             Flight firstLeg = firstMultiStopFlight.get(0);
-            assertEquals("First leg's departure location should match", "CityX", firstLeg.getDepartureLocation());
-            assertEquals("First leg's destination location should match", "CityY", firstLeg.getDestinationLocation());
+            assertEquals("First leg's departure location should match", "CityX", firstLeg.getOrigin());
+            assertEquals("First leg's destination location should match", "CityY", firstLeg.getDestination());
 
             // Verify the last leg is from "CityY" to "CityZ"
             Flight lastLeg = firstMultiStopFlight.get(firstMultiStopFlight.size() - 1);
-            assertEquals("Last leg's departure location should match", "CityY", lastLeg.getDepartureLocation());
-            assertEquals("Last leg's destination location should match", "CityZ", lastLeg.getDestinationLocation());
+            assertEquals("Last leg's departure location should match", "CityY", lastLeg.getOrigin());
+            assertEquals("Last leg's destination location should match", "CityZ", lastLeg.getDestination());
 
             // Verify the correct sequencing of flights
             for (int i = 0; i < firstMultiStopFlight.size() - 1; i++) {
                 Flight currentLeg = firstMultiStopFlight.get(i);
                 Flight nextLeg = firstMultiStopFlight.get(i + 1);
                 assertEquals("Destination of the current leg should match the departure of the next leg",
-                        currentLeg.getDestinationLocation(), nextLeg.getDepartureLocation());
+                        currentLeg.getDestination(), nextLeg.getOrigin());
             }
         }
 
@@ -136,7 +136,7 @@ public class FlightManagerTest {
         assertNotNull("Weekly flights list should not be null", weeklyFlights);
 
         // Test for correct number of flights within the week
-        int expectedNumberOfWeeklyFlights = 35;
+        int expectedNumberOfWeeklyFlights = 54;
         assertEquals("Should return the correct number of weekly flights", expectedNumberOfWeeklyFlights,
                 weeklyFlights.size());
 

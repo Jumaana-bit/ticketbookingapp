@@ -6,8 +6,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -28,6 +27,20 @@ public class BookingController {
     private final BookingManager bookingManager;
     private final FlightManager flightManager;
     private final UserManager userManager;
+
+    private Random random = new Random();
+
+    private String generateTicketNumber() {
+        // Generates a realistic alphanumeric ticket number
+        return "TKT" + (1000000 + random.nextInt(9000000));
+    }
+
+    private String generateSeatNumber() {
+        // Generates a realistic seat number, assuming rows 1-30 and seats A-F
+        int row = 1 + random.nextInt(30);
+        char seat = (char) ('A' + random.nextInt(6));
+        return row + "" + seat;
+    }
 
     @Autowired
     public BookingController(BookingManager bookingManager, FlightManager flightManager, UserManager userManager) {
@@ -74,8 +87,8 @@ public class BookingController {
         if (user.isPresent()) {
             // Store user's name in the session
             session.setAttribute("userName", user.get().getName());
-            // Authentication successful, redirect to flights page
-            return "redirect:/flights";
+            // Authentication successful, redirect to search flights page
+            return "redirect:/search";
         } else {
             // Authentication failed, redirect back to login page with error message
             redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
@@ -83,174 +96,128 @@ public class BookingController {
         }
     }
 
-    /**
-     * Handles the request to view weekly flights.
-     * Fetch available flights from the FlightManager and display them.
-     */
-    @GetMapping("/flights")
-    public String viewWeeklyFlights(@RequestParam Optional<String> from,
-            @RequestParam Optional<String> to,
-            @RequestParam Optional<String> dateString,
-            Model model, HttpSession session) {
-        final LocalDate[] searchDateContainer = { null };
-
-        dateString.ifPresent(d -> session.setAttribute("searchDate", d));
-
-        String sessionDateStr = (String) session.getAttribute("searchDate");
-        if (sessionDateStr != null) {
-            try {
-                searchDateContainer[0] = LocalDate.parse(sessionDateStr, DateTimeFormatter.ISO_DATE);
-            } catch (DateTimeParseException e) {
-                session.removeAttribute("searchDate");
-                model.addAttribute("dateError", "Invalid date format. Please use YYYY-MM-DD.");
-            }
+    @PostMapping("/search")
+    public String handleFlightSearch(@RequestParam("searchFrom") String searchFrom,
+            @RequestParam("searchTo") String searchTo,
+            @RequestParam("tripType") String tripType,
+            @RequestParam("departureDate") String departureDate,
+            @RequestParam(value = "returnDate", required = false) String returnDate,
+            HttpSession session, RedirectAttributes redirectAttributes) {
+        session.setAttribute("searchFrom", searchFrom);
+        session.setAttribute("searchTo", searchTo);
+        session.setAttribute("tripType", tripType);
+        session.setAttribute("departureDate", departureDate);
+        if (tripType.equals("Round Trip")) {
+            session.setAttribute("returnDate", returnDate);
         }
 
-        from.ifPresent(f -> session.setAttribute("searchFrom", f));
-        to.ifPresent(t -> session.setAttribute("searchTo", t));
+        return "redirect:/flights";
+    }
 
-        String searchFrom = (String) session.getAttribute("searchFrom");
-        String searchTo = (String) session.getAttribute("searchTo");
-        String userName = (String) session.getAttribute("userName");
+    @GetMapping("/flights")
+    public String viewFlights(Model model, HttpSession session) {
+        String from = (String) session.getAttribute("searchFrom");
+        String to = (String) session.getAttribute("searchTo");
+        String tripType = (String) session.getAttribute("tripType");
+        String departureDateString = (String) session.getAttribute("departureDate");
+        String returnDateString = (String) session.getAttribute("returnDate");
 
-        List<Flight> flights = flightManager.getWeeklyFlights();
+        System.out.println("Flight search initiated");
+        System.out.println("From: " + from);
+        System.out.println("To: " + to);
+        System.out.println("Trip Type: " + tripType);
+        System.out.println("Departure Date: " + departureDateString);
+        System.out.println("Return Date: " + returnDateString);
 
-        flights = flights.stream()
-                .filter(flight -> searchFrom == null || flight.getDepartureLocation().equalsIgnoreCase(searchFrom))
-                .filter(flight -> searchTo == null || flight.getDestinationLocation().equalsIgnoreCase(searchTo))
-                .filter(flight -> searchDateContainer[0] == null
-                        || flight.getDepartureTime().toLocalDate().isEqual(searchDateContainer[0]))
-                .collect(Collectors.toList());
+        try {
+            final LocalDate departureDate;
+            final LocalDate returnDate;
 
-        model.addAttribute("flights", flights);
-        model.addAttribute("userName", userName);
-        model.addAttribute("searchFrom", searchFrom);
-        model.addAttribute("searchTo", searchTo);
-        model.addAttribute("searchDate", sessionDateStr);
+            if (departureDateString != null && !departureDateString.isEmpty()) {
+                departureDate = LocalDate.parse(departureDateString, DateTimeFormatter.ISO_DATE);
+                System.out.println("Parsed Departure Date: " + departureDate);
+            } else {
+                departureDate = null;
+            }
+
+            if ("Round Trip".equals(tripType) && returnDateString != null && !returnDateString.isEmpty()) {
+                returnDate = LocalDate.parse(returnDateString, DateTimeFormatter.ISO_DATE);
+                System.out.println("Parsed Return Date: " + returnDate);
+            } else {
+                returnDate = null;
+            }
+
+            List<Flight> flights = flightManager.searchFlights(from, to, departureDate, returnDate);
+            System.out.println("Number of flights found: " + flights.size());
+
+            List<Flight> departureFlights = flights.stream()
+                    .filter(flight -> departureDate != null
+                            && flight.getDepartureTime().toLocalDate().equals(departureDate))
+                    .collect(Collectors.toList());
+
+            List<Flight> returnFlights = flights.stream()
+                    .filter(flight -> returnDate != null && flight.getDepartureTime().toLocalDate().equals(returnDate))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("departureFlights", departureFlights);
+            model.addAttribute("returnFlights", returnFlights);
+            model.addAttribute("tripType", tripType);
+
+        } catch (DateTimeParseException e) {
+            System.out.println("Date parsing error: " + e.getMessage());
+            model.addAttribute("dateError", "Invalid date format. Please use YYYY-MM-DD.");
+        }
 
         return "flights";
     }
 
-    @GetMapping("/resetSearch")
-    public String resetSearch(HttpSession session) {
-        // Remove search criteria from the session
-        session.removeAttribute("searchFrom");
-        session.removeAttribute("searchTo");
-        session.removeAttribute("searchDate");
-
-        // Redirect back to the flights page
-        return "redirect:/flights";
+    @GetMapping("/search")
+    public String showSearchPage() {
+        return "search";
     }
 
-    @GetMapping("/book/{id}")
-    public String bookFlight(@PathVariable("id") int id, Model model) {
-        // Assuming you have a method to get a flight by its ID
-        Optional<Flight> flight = flightManager.getFlightById(id);
-
-        if (flight.isPresent()) {
-            model.addAttribute("flight", flight.get());
-            return "flight-confirmation"; // Return the view for booking confirmation
-        } else {
-            // Handle the case where the flight ID is not found
-            return "redirect:/flights"; // For example, redirect back to the flights list
-        }
-    }
-
-    @PostMapping("/confirm-flight/{id}")
-    public String confirmFlight(@PathVariable("id") int id, HttpSession session) {
-        Optional<Flight> flightOpt = flightManager.getFlightById(id);
-
-        if (flightOpt.isPresent()) {
-            Flight confirmedFlight = flightOpt.get();
-
-            // Retrieve or create the itinerary list from the session
-            List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
-            if (itinerary == null) {
-                itinerary = new ArrayList<>();
-                session.setAttribute("itinerary", itinerary);
-            }
-
-            // Add the confirmed flight to the itinerary
-            itinerary.add(confirmedFlight);
-
-            // Redirect to the itinerary page
-            return "redirect:/add-to-itinerary";
-        } else {
-            // Handle case where flight ID is not found, e.g., redirect to flights page with
-            // an error message
-            return "redirect:/flights?error=FlightNotFound";
-        }
-    }
-
-    @GetMapping("/add-to-itinerary")
-    public String viewItinerary(Model model, HttpSession session) {
+    @GetMapping("/itinerary")
+    public String showItinerary(Model model, HttpSession session) {
         List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
-        if (itinerary == null) {
-            itinerary = new ArrayList<>();
+        if (itinerary == null || itinerary.isEmpty()) {
+            System.out.println("Itinerary is empty or null.");
+            model.addAttribute("errorMessage", "Your itinerary is currently empty.");
+        } else {
+            System.out.println("Itinerary size: " + itinerary.size() + " | Adding to model.");
+            model.addAttribute("itinerary", itinerary);
         }
-        double totalPrice = itinerary.stream().mapToDouble(Flight::getPrice).sum();
-
-        model.addAttribute("itinerary", itinerary);
-        model.addAttribute("totalPrice", totalPrice);
-
         return "itinerary";
     }
 
-    @PostMapping("/generate-tickets")
-    public String generateTickets(HttpSession session, RedirectAttributes redirectAttributes, Model model) {
-        List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
-
-        // Check for a valid itinerary
-        if (itinerary == null || itinerary.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "No flights selected for booking.");
-            return "redirect:/flights";
-        }
-
-        // Check for cyclic itinerary using the BookingManager
-        if (bookingManager.isCyclicItinerary(itinerary)) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Cyclic itinerary detected. Unable to generate tickets.");
-            return "redirect:/add-to-itinerary";
-        }
-
+    @PostMapping("/book-and-generate-tickets")
+    public String bookAndGenerateTickets(@RequestParam("depId") int depId,
+            @RequestParam(value = "retId", required = false) Integer retId, Model model) {
         List<Ticket> tickets = new ArrayList<>();
-        Random random = new Random();
 
-        for (Flight flight : itinerary) {
+        // Process departure flight
+        Optional<Flight> depFlightOpt = flightManager.getFlightById(depId);
+        depFlightOpt.ifPresent(flight -> {
             Ticket ticket = new Ticket();
-
-            // Randomly generate a ticket number (assuming a format, adjust as needed)
-            String ticketNumber = "TKT" + (100000 + random.nextInt(900000));
-            ticket.setTicketNumber(ticketNumber);
-
-            // Randomly generate a seat number (assuming format "A1", "B2", etc.)
-            char seatRow = (char) ('A' + random.nextInt(6)); // For rows A-F
-            int seatColumn = 1 + random.nextInt(10); // For columns 1-10
-            String seatNumber = seatRow + String.valueOf(seatColumn);
-            ticket.setSeatNumber(seatNumber);
-
-            // Set other ticket properties
-            ticket.setFlightDetails(flight.getDetails()); // Assuming a method to get flight details
-            ticket.setPassengerName("John Doe"); // Example, replace with actual passenger name
-
+            ticket.setFlight(flight);
+            ticket.setTicketNumber(generateTicketNumber());
+            ticket.setSeatNumber(generateSeatNumber());
             tickets.add(ticket);
+        });
+
+        // Process return flight only if retId is provided
+        if (retId != null && retId > 0) { // Check if retId is provided and valid
+            Optional<Flight> retFlightOpt = flightManager.getFlightById(retId);
+            retFlightOpt.ifPresent(flight -> {
+                Ticket ticket = new Ticket();
+                ticket.setFlight(flight);
+                ticket.setTicketNumber(generateTicketNumber());
+                ticket.setSeatNumber(generateSeatNumber());
+                tickets.add(ticket);
+            });
         }
 
-        // Add tickets to the model to display them on the success page
         model.addAttribute("tickets", tickets);
-
-        // Redirect to the ticket-success page
         return "ticket-success";
     }
 
-    @PostMapping("/remove-flight/{flightId}")
-    public String removeFlightFromItinerary(@PathVariable("flightId") int flightId, HttpSession session) {
-        List<Flight> itinerary = (List<Flight>) session.getAttribute("itinerary");
-        if (itinerary != null) {
-            itinerary.removeIf(flight -> flight.getFlightId() == flightId);
-            session.setAttribute("itinerary", itinerary);
-        }
-        return "redirect:/add-to-itinerary";
-    }
-    
 }
