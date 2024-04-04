@@ -1,16 +1,19 @@
 # Flight Ticket Booking System - SOFE3980 Group 26 Project
 
-This application is a flight ticket booking system designed for the SOFE3980 Group 26 Project. Built using Java, Spring Boot, and Thymeleaf, it offers a platform for users to search, book, and manage flight itineraries. The project focused on designing and implementing tests using JUnit and Mockito.
+This application is a flight ticket booking system designed for the SOFE3980 Group 26 Project. Built using Java, Spring Boot, and Thymeleaf, it offers a platform for users to search, book, and manage flight itineraries. The project focused on designing and implementing tests using JUnit and Mockito. ***Updated video showing one way/round trip booking and 12/24hr time conversion:*** https://drive.google.com/file/d/1P3UDdw5org_-8aAfK92WHyqpi39jMnQ2/view?usp=sharing 
 
 ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/ad6762af-5916-490a-94ad-2f932003a0cb)
 
 ## Key Features
 
 - **Flight Search**: Users can search for flights based on origin, destination, and date. The search functionality is flexible, allowing for broad searches or more specific queries.
+  ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/8bc1c68b-7b3e-40f9-8535-8a15c5345817)
 
 - **Itinerary Management**: Users can create and manage their itineraries, adding flights and viewing a detailed summary of their upcoming trips.
+  ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/c197a2ba-ca28-4a7e-ae3b-0da6148b0499)
 
 - **Booking Confirmation**: Before finalizing a booking, users are presented with a confirmation page detailing the flight, allowing them to review their choice before adding it to their itinerary.
+  ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/7e65cdf8-fdff-48a9-94bb-39d143ea5308)
 
 - **Cyclic Itinerary Check**: The system includes logic to prevent users from creating cyclic itineraries, enhancing the user experience by ensuring travel plans are logical and sequential. Example:
   ![image](https://github.com/Jumaana-bit/ticketbookingapp/assets/58871999/6e69c082-4616-4226-8c97-aca14481618d)
